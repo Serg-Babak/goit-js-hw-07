@@ -1,48 +1,77 @@
-import { galleryItems } from './gallery-items.js';
-// Change code below this line
+import { galleryItems } from "./gallery-items.js";
 
+const refs = {
+  imageContainer: document.querySelector(".gallery"),
+  body: document.body,
+};
 
-const galeryList = document.querySelector('.gallery');
-const makeGaleryList = galleryItems.map((galleryItem) =>
-`<li> <img class=gallery__image src=${galleryItem.preview} alt=${galleryItem.description} width="354" height="240"> </li>`)
-.join("");
-galeryList.style.listStyle = 'none';
-
-galeryList.insertAdjacentHTML("beforeend", makeGaleryList) ; 
-console.log(galleryItems);
-
-document.querySelector('li').onclick = () => {
-
-	basicLightbox.create(`
-    <li> <img width="1400" height="900" src=${galleryItems.original}></li>
-	`)
-    .show()
-
+function makegalleryItems(items) {
+  return items
+    .map(({ preview, description, original }) => {
+      return `<div class="gallery__item">
+    <a class="gallery__link" href="${original}">
+    <img loading="lazy" width="354" height="240"
+      class="gallery__image"
+      src="${preview}"
+      data-source="${original}"
+      alt="${description}"
+    />
+  </a>
+</div>`;
+    })
+    .join("");
 }
 
-{/* <div class="gallery__item">
-        <a class="gallery__link" href="${galleryItems.original}">
-    <img
-        class="gallery__image"
-        src="${galleryItem.preview}"
-        data-source="${galleryItem.original}"
-        alt="${galleryItem.description}"
-        width="354" height="240"
-    />
-        </a>
-</div> */}
+const cardgalleryMarkup = makegalleryItems(galleryItems);
+refs.imageContainer.insertAdjacentHTML("beforeend", cardgalleryMarkup);
 
+const createModalWindow = (imageAdress) => {
+  window.instance = basicLightbox.create(
+    `
+    <img src="${imageAdress}">
+`,
+    {
+      onShow: () =>
+        window.addEventListener("keydown", closeModalWindowByEscPressing),
+      onClose: () => {
+        window.removeEventListener("keydown", closeModalWindowByEscPressing);
+        refs.body.classList.remove("disable-scroll");
+      },
+    }
+  );
+  return instance;
+};
 
-// const instance = basicLightbox.create(`
-// <div class="gallery__item">
-//     <a class="gallery__link" href="large-image.jpg">
-//     <img
-//         class="gallery__image"
-//         src=${galleryItem.preview}
-//         data-source="large-image.jpg"
-//         alt=${galleryItem.description}
-//     />
-//     </a>
-// </div>
-// `)
-// instance.show()
+refs.imageContainer.addEventListener("click", onClickOpenModal);
+
+function onClickOpenModal(event) {
+  event.preventDefault();
+  if (!event.target.classList.contains("gallery__image")) {
+    return;
+  }
+  const originalImageRef = event.target.dataset.source;
+  createModalWindow(originalImageRef).show();
+  refs.body.classList.add("disable-scroll");
+}
+
+function closeModalWindowByEscPressing(event) {
+  const ESC_KEY_CODE = "Escape";
+  if (event.code === ESC_KEY_CODE && instance.visible()) {
+    instance.close();
+    refs.body.classList.remove("disable-scroll");
+  }
+}
+
+const lazyImages = refs.imageContainer.querySelectorAll(".gallery__image");
+
+lazyImages.forEach((image) =>
+  image.addEventListener("load", onImageLoaded, { once: true })
+);
+
+function onImageLoaded(event) {
+  event.target.classList.add("appear");
+}
+
+lazyImages.forEach((image) =>
+  image.addEventListener("mouseenter", onMouseEnter)
+);
