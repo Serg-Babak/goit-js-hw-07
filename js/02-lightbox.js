@@ -25,11 +25,11 @@ const lightbox = new SimpleLightbox(".gallery a", {
     captionsData: "alt",
     captionDelay: 250,
     scrollZoom: false,
-  });
-  
-  lightbox.on("shown.simplelightbox", function () {
+});
+
+lightbox.on("shown.simplelightbox", function () {
     refs.body.classList.add("disable-scroll");
-  });
-  lightbox.on("closed.simplelightbox", function () {
+});
+lightbox.on("closed.simplelightbox", function () {
     refs.body.classList.remove("disable-scroll");
-  });
+});
