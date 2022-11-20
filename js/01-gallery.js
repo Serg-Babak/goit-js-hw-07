@@ -62,16 +62,16 @@ function closeModalWindowByEscPressing(event) {
   }
 }
 
-const lazyImages = refs.imageContainer.querySelectorAll(".gallery__image");
+// const lazyImages = refs.imageContainer.querySelectorAll(".gallery__image");
 
-lazyImages.forEach((image) =>
-  image.addEventListener("load", onImageLoaded, { once: true })
-);
+// lazyImages.forEach((image) =>
+//   image.addEventListener("load", onImageLoaded, { once: true })
+// );
 
-function onImageLoaded(event) {
-  event.target.classList.add("appear");
-}
+// function onImageLoaded(event) {
+//   event.target.classList.add("appear");
+// }
 
-lazyImages.forEach((image) =>
-  image.addEventListener("mouseenter", onMouseEnter)
-);
+// lazyImages.forEach((image) =>
+//   image.addEventListener("mouseenter", onMouseEnter)
+// );
